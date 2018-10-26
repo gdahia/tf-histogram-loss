@@ -6,7 +6,30 @@ from histogram_loss import utils
 def histogram_loss(descriptors: tf.Tensor,
                    labels: tf.Tensor,
                    n_bins: int = 256) -> tf.Tensor:
-  """
+  """Computes the histogram loss for the given `descriptors` and `labels`, with a `n_bins`-dimensional uniformly distributed histogram.
+
+  This function implements the loss described in:
+    ["Learning Deep Embeddings with Histogram Loss". E. Ustinova, V. Lempitsky](https://arxiv.org/abs/1611.00822)
+
+  It differs from the proposed implementation because it computes the squared L2 distance between descriptors, instead of their dot product.
+  The loss to minimize, then, becomes the estimated probability of the distance of a negative pair to be less than the distance of a positive pair.
+  Since the descriptors are L2 normalized, the similarity S(d1, d2) = cos(d1, d2) between two descriptors d1 and d2 and their L2 distance D(d1, d2) are related via:
+    D(d1, d2) = 2 - 2 * acos(S(d1, d2))
+
+  The squared L2 distance between L2-normalized vectors is bounded to [0; 4] and the histogram is fit with `n_bins` bins uniformly distributed in this range.
+
+  Args:
+    descriptors: a `tf.Tensor` of `tf.float32` L2-normalized descriptors of shape `[batch_size, descriptor_dims]`.
+    labels: a `tf.Tensor` of `tf.int32` labels for the given descriptors. Its shape must be `[batch_size]`.
+    n_bins: an `int` indicating the number of bins to uniformly divide the range [0; 4].
+
+  Returns:
+    the histogram loss of the descriptors, computed with their L2 distances.
+
+  Raises:
+    ValueError: if `descriptors` has `ndmis` other than 2.
+    ValueError: if `labels` has `ndmis` other than 1.
+    ValueError: if `descriptors` and `labels` have incompatible shapes.
   """
   with tf.name_scope('histogram_loss'):
     descriptors = tf.convert_to_tensor(descriptors, name='descriptors_input')
