@@ -3,7 +3,7 @@ from tensorflow.python.eager.context import eager_mode
 import numpy as np
 
 import pytest
-from hypothesis import given
+from hypothesis import given, assume
 import hypothesis.strategies as st
 import hypothesis.extra.numpy as np_st
 
@@ -12,14 +12,14 @@ from histogram_loss import utils
 
 @pytest.fixture(scope='function')
 def float_graph():
-  input_pl = tf.placeholder(tf.float32)
+  input_pl = tf.placeholder(tf.float32, [None, None])
   output = utils.flat_strict_upper(input_pl)
   yield input_pl, output
 
 
 @pytest.fixture(scope='function')
 def int_graph():
-  input_pl = tf.placeholder(tf.int64)
+  input_pl = tf.placeholder(tf.int64, [None, None])
   output = utils.flat_strict_upper(input_pl)
   yield input_pl, output
 
@@ -139,3 +139,11 @@ class TestUtils:
       graph_output = sess.run(output, feed_dict={input_pl: input_})
 
     np.testing.assert_equal(eager_output, graph_output)
+
+  @given(shape=np_st.array_shapes(max_dims=4))
+  def test_flat_strict_upper_wrong_input_dims(self, shape):
+    assume(len(shape) != 2)
+
+    input_ = tf.placeholder(tf.int32, shape)
+    with pytest.raises(ValueError):
+      utils.flat_strict_upper(input_)
