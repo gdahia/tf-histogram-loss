@@ -54,7 +54,6 @@ def histogram_loss(descriptors: tf.Tensor,
     pos_binned = 1 - (n_bins - 1) * tf.abs(pos_dists - bins) / 2
     pos_binned = tf.nn.relu(pos_binned)
     pos_hist = tf.reduce_sum(pos_binned, axis=0) / tf.cast(n_pos, tf.float32)
-    pos_cdf = tf.cumsum(pos_hist)
 
     # compute negative pairs distance histogram and cdf approximation
     n_neg = tf.reduce_sum(1 - partitions)
@@ -62,5 +61,6 @@ def histogram_loss(descriptors: tf.Tensor,
     neg_binned = 1 - (n_bins - 1) * tf.abs(neg_dists - bins) / 2
     neg_binned = tf.nn.relu(neg_binned)
     neg_hist = tf.reduce_sum(neg_binned, axis=0) / tf.cast(n_neg, tf.float32)
+    neg_cdf = tf.cumsum(neg_hist)
 
-    return tf.reduce_sum(neg_hist * pos_cdf)
+    return tf.reduce_sum(pos_hist * neg_cdf)
