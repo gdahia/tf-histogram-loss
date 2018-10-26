@@ -8,6 +8,31 @@ def histogram_loss(descriptors: tf.Tensor, labels: tf.Tensor,
   """
   """
   with tf.name_scope('histogram_loss'):
+    descriptors = tf.convert_to_tensor(descriptors, name='descriptors_input')
+    labels = tf.convert_to_tensor(labels, name='labels_input')
+
+    # check if descriptors have proper dims
+    descs_shape = descriptors.get_shape().as_list()
+    if len(descs_shape) != 2:
+      raise ValueError("expected descriptors ndmis=2, "
+                       "found ndims={}. Full shape received: "
+                       "{}.".format(descs_shape[0], descs_shape))
+
+    # check if labels have proper dims
+    labels_shape = labels.get_shape().as_list()
+    if len(labels_shape) != 1:
+      raise ValueError("expected labels ndmis=2, found "
+                       "ndims={}. Full shape received: "
+                       "{}.".format(labels_shape[0], labels_shape))
+
+    # check if descriptors and labels have compatible shapes
+    if descs_shape[0] is not None and labels_shape[0] is not None:
+      if descs_shape[0] != 1 and labels_shape[0] != 1:
+        if descs_shape[0] != labels_shape[0]:
+          raise ValueError("descriptors and labels have "
+                           "incompatible first dimensions, "
+                           "{} vs {}.".format(descs_shape[0], labels_shape[0]))
+
     # compute pairwise distances for l2-normalized descriptors
     dists_mat = 2 - 2 * tf.matmul(descriptors, tf.transpose(descriptors))
     dists = utils.flat_strict_upper(dists_mat)
