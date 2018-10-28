@@ -238,3 +238,78 @@ class Block17(InceptionResNetBlock):
 
     # build branches, up, and internal keras layer structure
     super(Block17, self).build(input_shape)
+
+
+class Block8(InceptionResNetBlock):
+  """Inception ResNet 8x8 block layer.
+  
+  This layer encapsulates a ResNet 8x8 block.
+
+  Args:
+    scale: Activation scaling constant.
+    activation: Activation function to use. If you don't specify anything, no activation is applied (ie. "linear" activation: `a(x) = x`).
+  """
+
+  def __init__(self,
+               scale: float = 1.0,
+               activation=tf.nn.relu,
+               **kwargs: Dict[str, Any]) -> None:
+    self._scale = scale
+    self._activation = activation
+    self._branches = []  # type: List[List[tf.keras.layers.Layer]]
+    super(InceptionResNetBlock, self).__init__(**kwargs)
+
+  def build(self, input_shape: tf.TensorShape) -> None:
+    # branch 0
+    branch0 = []  # tyep: List[tf.keras.layers.Layer]
+    branch0_0 = tf.keras.layers.Conv2D(
+        filters=192,
+        kernel_size=1,
+        strides=1,
+        padding='same',
+        activation=tf.nn.relu)
+    branch0.append(branch0_0)
+
+    batch_norm = tf.keras.layers.BatchNormalization()
+    branch0.append(batch_norm)
+    self._branches.append(branch0)
+
+    # branch 1
+    branch1 = []  # tyep: List[tf.keras.layers.Layer]
+    branch1_0 = tf.keras.layers.Conv2D(
+        filters=192,
+        kernel_size=1,
+        strides=1,
+        padding='same',
+        activation=tf.nn.relu)
+    branch1.append(branch1_0)
+
+    batch_norm = tf.keras.layers.BatchNormalization()
+    branch1.append(batch_norm)
+
+    branch1_1 = tf.keras.layers.Conv2D(
+        filters=192,
+        kernel_size=[1, 3],
+        strides=1,
+        padding='same',
+        activation=tf.nn.relu)
+    branch1.append(branch1_1)
+
+    batch_norm = tf.keras.layers.BatchNormalization()
+    branch1.append(batch_norm)
+    self._branches.append(branch1)
+
+    branch1_2 = tf.keras.layers.Conv2D(
+        filters=192,
+        kernel_size=[3, 1],
+        strides=1,
+        padding='same',
+        activation=tf.nn.relu)
+    branch1.append(branch1_2)
+
+    batch_norm = tf.keras.layers.BatchNormalization()
+    branch1.append(batch_norm)
+    self._branches.append(branch1)
+
+    # build branches, up, and internal keras layer structure
+    super(Block8, self).build(input_shape)
