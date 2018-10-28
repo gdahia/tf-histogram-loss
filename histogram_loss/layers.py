@@ -9,7 +9,7 @@ class Block35(tf.keras.layers.Layer):
   This layer creates a layer to encapsulate a ResNet 35x35 block.
 
   Args:
-    scale:
+    scale: Activation scaling constant.
     activation: Activation function to use. If you don't specify anything, no activation is applied (ie. "linear" activation: `a(x) = x`).
   """
 
