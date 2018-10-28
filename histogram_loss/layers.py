@@ -51,9 +51,7 @@ class InceptionResNetBlock(tf.keras.layers.Layer, ABC):
 
   def compute_output_shape(self,
                            input_shape: tf.TensorShape) -> tf.TensorShape:
-    shape = tf.TensorShape(input_shape).as_list()
-    shape[-1] = 128
-    return tf.TensorShape(shape)
+    return tf.TensorShape(input_shape)
 
   def get_config(self) -> Dict[str, Any]:
     base_config = super(InceptionResNetBlock, self).get_config()
