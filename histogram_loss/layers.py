@@ -311,3 +311,47 @@ class Block8(InceptionResNetBlock):
 
     # build branches, up, and internal keras layer structure
     super(Block8, self).build(input_shape)
+
+
+class InceptionResNetReduction(tf.keras.layers.Layer, ABC):
+  """Base Inception ResNet reduction keras layer."""
+
+  def build(self, input_shape: tf.TensorShape) -> None:
+    # build each layer of each branch according
+    # to the output shape of the previous layer
+    for branch in self._branches:
+      branch_input_shape = input_shape
+      for layer in branch:
+        layer.build(branch_input_shape)
+        branch_input_shape = layer.compute_output_shape(branch_input_shape)
+
+    super(InceptionResNetReduction, self).build(input_shape)
+
+  def call(self, inputs: tf.Tensor) -> tf.Tensor:
+    # forward through branches
+    branch_outputs = []
+    for branch in self._branches:
+      branch_output = inputs
+      for layer in branch:
+        branch_output = layer.call(branch_output)
+      branch_outputs.append(branch_output)
+
+    # stack branches
+    out = tf.concat(branch_outputs, 3)
+
+    return out
+
+  def compute_output_shape(self,
+                           input_shape: tf.TensorShape) -> tf.TensorShape:
+    shape = tf.TensorShape(input_shape).as_list()
+    shape[1] = shape[1] // 2 - 1
+    shape[2] = shape[2] // 2 - 1
+    shape[3] = 643
+    return tf.TensorShape(shape)
+
+  def get_config(self) -> Dict[str, Any]:
+    return super(InceptionResNetReduction, self).get_config()
+
+  @classmethod
+  def from_config(cls, config: Dict[str, Any]):
+    return cls(**config)
