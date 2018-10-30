@@ -168,3 +168,39 @@ class InceptionResNetV1:
 
     # create saver
     self._saver = tf.train.Saver(var_list=self._variables)
+
+  def forward(self, inputs: tf.Tensor, training: bool = False) -> tf.Tensor:
+    """Performs forward propagation/inference on the model.
+
+    Args:
+      inputs: a `tf.Tensor` with the inputs in shape `[batch_size, height, width, channels]`.
+      training: Either a Python boolean, or a TensorFlow boolean scalar tensor (e.g. a placeholder). Whether to perform forward propagation in training mode (use batch statistics in batch normalization, apply dropout) or in inference mode (use the running statiscs for batch normalization, return the input untouched).
+
+    Returns:
+      a `tf.Tensor` matrix of shape `[batch_size, bottleneck_units]` with the L2 normalized descriptors of the given inputs.
+    """
+    # common layers
+    outputs = inputs
+    for layer, training_kw in zip(self._layers, self._training_kws):
+      if training_kw:
+        outputs = layer(outputs, training=training)
+      else:
+        outputs = layer(outputs)
+
+    # adaptive pooling
+    outputs = tf.reduce_mean(outputs, axis=[1, 2])
+
+    # flatten
+    outputs = tf.reshape(outputs, [-1, self._bottleneck_units])
+
+    # dropout
+    outputs = self._dropout(outputs, training=training)
+
+    # bottleneck layer
+    outputs = self._bottleneck(outputs)
+    outputs = self._bottleneck_batchnorm(outputs, training=training)
+
+    # l2 normalize
+    outputs = tf.nn.l2_normalize(outputs, axis=-1)
+
+    return outputs
