@@ -204,7 +204,6 @@ class Block17(InceptionResNetBlock):
 
     batch_norm = tf.keras.layers.BatchNormalization()
     branch1.append(batch_norm)
-    self._branches.append(branch1)
 
     branch1_2 = tf.keras.layers.Conv2D(
         filters=128,
@@ -263,7 +262,6 @@ class Block8(InceptionResNetBlock):
 
     batch_norm = tf.keras.layers.BatchNormalization()
     branch1.append(batch_norm)
-    self._branches.append(branch1)
 
     branch1_2 = tf.keras.layers.Conv2D(
         filters=192,
