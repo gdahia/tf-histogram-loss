@@ -204,3 +204,30 @@ class InceptionResNetV1:
     outputs = tf.nn.l2_normalize(outputs, axis=-1)
 
     return outputs
+
+  def loss(self, outputs: tf.Tensor, labels: tf.Tensor) -> tf.Tensor:
+    """Computes the histogram loss of `outputs` with given `labels`.
+
+    Args:
+      outputs:
+      labels:
+
+    Returns:
+    """
+    return histogram_loss(descriptors=outputs, labels=labels)
+
+  def train(self, loss: tf.Tensor, learning_rate: float):
+    """
+    """
+
+    optimizer = tf.train.AdamOptimizer(learning_rate)
+
+    return optimizer.minimize(loss)
+
+  def save(self):
+    """
+    """
+
+  def load(self):
+    """
+    """
