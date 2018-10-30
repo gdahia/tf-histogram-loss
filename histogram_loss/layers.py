@@ -1,5 +1,5 @@
 from typing import List, Dict, Any
-from abc import ABC
+from abc import ABC, abstractmethod
 
 import tensorflow as tf
 
@@ -350,8 +350,12 @@ class InceptionResNetReduction(tf.keras.layers.Layer, ABC):
     shape = tf.TensorShape(input_shape).as_list()
     shape[1] = shape[1] // 2 - 1
     shape[2] = shape[2] // 2 - 1
-    shape[3] = 643
+    shape[3] += self.get_num_filters()
     return tf.TensorShape(shape)
+
+  @abstractmethod
+  def get_num_filters(self):
+    """Number of added filters in the reduction."""
 
   def get_config(self) -> Dict[str, Any]:
     return super(InceptionResNetReduction, self).get_config()
