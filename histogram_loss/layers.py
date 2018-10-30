@@ -316,6 +316,10 @@ class Block8(InceptionResNetBlock):
 class InceptionResNetReduction(tf.keras.layers.Layer, ABC):
   """Base Inception ResNet reduction keras layer."""
 
+  def __init__(self, **kwargs: Dict[str, Any]) -> None:
+    self._branches = []  # type: List[List[tf.keras.layers.Layer]]
+    super(InceptionResNetReduction, self).__init__(**kwargs)
+
   def build(self, input_shape: tf.TensorShape) -> None:
     # build each layer of each branch according
     # to the output shape of the previous layer
