@@ -5,7 +5,23 @@ import tensorflow as tf
 
 
 class InceptionResNetBlock(tf.keras.layers.Layer, ABC):
-  """Base Inception ResNet block keras layer."""
+  """Base Inception ResNet block keras layer.
+
+  This layer encapsulates a general Inception ResNet block.
+
+  Args:
+    scale: Activation scaling constant. Instead of doing the traditional residual connection `F(x) + x`, does `scale * F(x) + x`.
+    activation: Activation function to use. If you don't specify anything, no activation is applied (ie. "linear" activation: `a(x) = x`).
+  """
+
+  def __init__(self,
+               scale: float = 1.0,
+               activation=tf.nn.relu,
+               **kwargs: Dict[str, Any]) -> None:
+    self._scale = scale
+    self._activation = activation
+    self._branches = []  # type: List[List[tf.keras.layers.Layer]]
+    super(InceptionResNetBlock, self).__init__(**kwargs)
 
   def build(self, input_shape: tf.TensorShape) -> None:
     # build each layer of each branch according
@@ -65,27 +81,11 @@ class InceptionResNetBlock(tf.keras.layers.Layer, ABC):
 
 
 class Block35(InceptionResNetBlock):
-  """Inception ResNet 35x35 block layer.
-  
-  This layer encapsulates a ResNet 35x35 block.
-
-  Args:
-    scale: Activation scaling constant.
-    activation: Activation function to use. If you don't specify anything, no activation is applied (ie. "linear" activation: `a(x) = x`).
-  """
-
-  def __init__(self,
-               scale: float = 1.0,
-               activation=tf.nn.relu,
-               **kwargs: Dict[str, Any]) -> None:
-    self._scale = scale
-    self._activation = activation
-    self._branches = []  # type: List[List[tf.keras.layers.Layer]]
-    super(InceptionResNetBlock, self).__init__(**kwargs)
+  """Inception ResNet 35x35 block layer."""
 
   def build(self, input_shape: tf.TensorShape) -> None:
     # branch 0
-    branch0 = []  # tyep: List[tf.keras.layers.Layer]
+    branch0 = []  # type: List[tf.keras.layers.Layer]
     branch0_0 = tf.keras.layers.Conv2D(
         filters=32,
         kernel_size=1,
@@ -99,7 +99,7 @@ class Block35(InceptionResNetBlock):
     self._branches.append(branch0)
 
     # branch 1
-    branch1 = []  # tyep: List[tf.keras.layers.Layer]
+    branch1 = []  # type: List[tf.keras.layers.Layer]
     branch1_0 = tf.keras.layers.Conv2D(
         filters=32,
         kernel_size=1,
@@ -124,7 +124,7 @@ class Block35(InceptionResNetBlock):
     self._branches.append(branch1)
 
     # branch 2
-    branch2 = []  # tyep: List[tf.keras.layers.Layer]
+    branch2 = []  # type: List[tf.keras.layers.Layer]
     branch2_0 = tf.keras.layers.Conv2D(
         filters=32,
         kernel_size=1,
@@ -164,27 +164,11 @@ class Block35(InceptionResNetBlock):
 
 
 class Block17(InceptionResNetBlock):
-  """Inception ResNet 17x17 block layer.
-  
-  This layer encapsulates a ResNet 17x17 block.
-
-  Args:
-    scale: Activation scaling constant.
-    activation: Activation function to use. If you don't specify anything, no activation is applied (ie. "linear" activation: `a(x) = x`).
-  """
-
-  def __init__(self,
-               scale: float = 1.0,
-               activation=tf.nn.relu,
-               **kwargs: Dict[str, Any]) -> None:
-    self._scale = scale
-    self._activation = activation
-    self._branches = []  # type: List[List[tf.keras.layers.Layer]]
-    super(InceptionResNetBlock, self).__init__(**kwargs)
+  """Inception ResNet 17x17 block layer."""
 
   def build(self, input_shape: tf.TensorShape) -> None:
     # branch 0
-    branch0 = []  # tyep: List[tf.keras.layers.Layer]
+    branch0 = []  # type: List[tf.keras.layers.Layer]
     branch0_0 = tf.keras.layers.Conv2D(
         filters=128,
         kernel_size=1,
@@ -198,7 +182,7 @@ class Block17(InceptionResNetBlock):
     self._branches.append(branch0)
 
     # branch 1
-    branch1 = []  # tyep: List[tf.keras.layers.Layer]
+    branch1 = []  # type: List[tf.keras.layers.Layer]
     branch1_0 = tf.keras.layers.Conv2D(
         filters=128,
         kernel_size=1,
@@ -239,27 +223,11 @@ class Block17(InceptionResNetBlock):
 
 
 class Block8(InceptionResNetBlock):
-  """Inception ResNet 8x8 block layer.
-  
-  This layer encapsulates a ResNet 8x8 block.
-
-  Args:
-    scale: Activation scaling constant.
-    activation: Activation function to use. If you don't specify anything, no activation is applied (ie. "linear" activation: `a(x) = x`).
-  """
-
-  def __init__(self,
-               scale: float = 1.0,
-               activation=tf.nn.relu,
-               **kwargs: Dict[str, Any]) -> None:
-    self._scale = scale
-    self._activation = activation
-    self._branches = []  # type: List[List[tf.keras.layers.Layer]]
-    super(InceptionResNetBlock, self).__init__(**kwargs)
+  """Inception ResNet 8x8 block layer."""
 
   def build(self, input_shape: tf.TensorShape) -> None:
     # branch 0
-    branch0 = []  # tyep: List[tf.keras.layers.Layer]
+    branch0 = []  # type: List[tf.keras.layers.Layer]
     branch0_0 = tf.keras.layers.Conv2D(
         filters=192,
         kernel_size=1,
@@ -273,7 +241,7 @@ class Block8(InceptionResNetBlock):
     self._branches.append(branch0)
 
     # branch 1
-    branch1 = []  # tyep: List[tf.keras.layers.Layer]
+    branch1 = []  # type: List[tf.keras.layers.Layer]
     branch1_0 = tf.keras.layers.Conv2D(
         filters=192,
         kernel_size=1,
@@ -314,7 +282,10 @@ class Block8(InceptionResNetBlock):
 
 
 class InceptionResNetReduction(tf.keras.layers.Layer, ABC):
-  """Base Inception ResNet reduction keras layer."""
+  """Base Inception ResNet reduction keras layer.
+
+  This layer encapsulates a general Inception ResNet reduction.
+  """
 
   def __init__(self, **kwargs: Dict[str, Any]) -> None:
     self._branches = []  # type: List[List[tf.keras.layers.Layer]]
@@ -366,10 +337,7 @@ class InceptionResNetReduction(tf.keras.layers.Layer, ABC):
 
 
 class ReductionA(InceptionResNetReduction):
-  """Inception ResNet reduction A layer.
-  
-  This layer encapsulates a ResNet reduction A.
-  """
+  """Inception ResNet reduction A layer."""
 
   def build(self, input_shape: tf.TensorShape) -> None:
     # branch 0
