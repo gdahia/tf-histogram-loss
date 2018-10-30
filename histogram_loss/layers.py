@@ -363,3 +363,74 @@ class InceptionResNetReduction(tf.keras.layers.Layer, ABC):
   @classmethod
   def from_config(cls, config: Dict[str, Any]):
     return cls(**config)
+
+
+class ReductionA(InceptionResNetReduction):
+  """Inception ResNet reduction A layer.
+  
+  This layer encapsulates a ResNet reduction A.
+  """
+
+  def build(self, input_shape: tf.TensorShape) -> None:
+    # branch 0
+    branch0 = []  # type: List[tf.keras.layers.Layer]
+    branch0_0 = tf.keras.layers.Conv2D(
+        filters=384,
+        kernel_size=3,
+        strides=2,
+        padding='valid',
+        activation=tf.nn.relu)
+    branch0.append(branch0_0)
+
+    batch_norm = tf.keras.layers.BatchNormalization()
+    branch0.append(batch_norm)
+    self._branches.append(branch0)
+
+    # branch 1
+    branch1 = []  # type: List[tf.keras.layers.Layer]
+    branch1_0 = tf.keras.layers.Conv2D(
+        filters=192,
+        kernel_size=1,
+        strides=1,
+        padding='same',
+        activation=tf.nn.relu)
+    branch1.append(branch1_0)
+
+    batch_norm = tf.keras.layers.BatchNormalization()
+    branch1.append(batch_norm)
+
+    branch1_1 = tf.keras.layers.Conv2D(
+        filters=192,
+        kernel_size=3,
+        strides=1,
+        padding='same',
+        activation=tf.nn.relu)
+    branch1.append(branch1_1)
+
+    batch_norm = tf.keras.layers.BatchNormalization()
+    branch1.append(batch_norm)
+
+    branch1_2 = tf.keras.layers.Conv2D(
+        filters=256,
+        kernel_size=3,
+        strides=1,
+        padding='same',
+        activation=tf.nn.relu)
+    branch1.append(branch1_2)
+
+    batch_norm = tf.keras.layers.BatchNormalization()
+    branch1.append(batch_norm)
+    self._branches.append(branch1)
+
+    # branch 2
+    branch2 = []  # type: List[tf.keras.layers.Layer]
+    branch2_0 = tf.keras.layers.MaxPool2D(
+        pool_size=3, stride=2, padding='valid')
+    branch2.append(branch2_0)
+    self._branches.append(branch2)
+
+    # build branches and internal keras layer structure
+    super(ReductionA, self).build(input_shape)
+
+  def get_num_filters(self):
+    return 640
