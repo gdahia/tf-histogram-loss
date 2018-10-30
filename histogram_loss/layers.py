@@ -499,3 +499,143 @@ class ReductionA(InceptionResNetReduction):
 
   def get_num_filters(self):
     return 640
+
+
+class ReductionB(InceptionResNetReduction):
+  """Inception ResNet reduction B layer."""
+
+  def build(self, input_shape: tf.TensorShape) -> None:
+    # branch 0
+    branch0 = []  # type: List[tf.keras.layers.Layer]
+    branch0_training_kws = []  # type: List[bool]
+
+    branch0_0 = tf.keras.layers.Conv2D(
+        filters=256,
+        kernel_size=1,
+        strides=1,
+        padding='same',
+        activation=tf.nn.relu)
+    branch0.append(branch0_0)
+    branch0_training_kws.append(False)
+
+    batch_norm = tf.keras.layers.BatchNormalization()
+    branch0.append(batch_norm)
+    branch0_training_kws.append(True)
+
+    branch0_1 = tf.keras.layers.Conv2D(
+        filters=384,
+        kernel_size=3,
+        strides=2,
+        padding='valid',
+        activation=tf.nn.relu)
+    branch0.append(branch0_1)
+    branch0_training_kws.append(False)
+
+    batch_norm = tf.keras.layers.BatchNormalization()
+    branch0.append(batch_norm)
+    branch0_training_kws.append(True)
+
+    assert 4 == len(branch0) == len(branch0_training_kws)
+    self._branches.append(branch0)
+    self._training_kws.append(branch0_training_kws)
+
+    # branch 1
+    branch1 = []  # type: List[tf.keras.layers.Layer]
+    branch1_training_kws = []  # type: List[bool]
+
+    branch1_0 = tf.keras.layers.Conv2D(
+        filters=256,
+        kernel_size=1,
+        strides=1,
+        padding='same',
+        activation=tf.nn.relu)
+    branch1.append(branch1_0)
+    branch1_training_kws.append(False)
+
+    batch_norm = tf.keras.layers.BatchNormalization()
+    branch1.append(batch_norm)
+    branch1_training_kws.append(True)
+
+    branch1_1 = tf.keras.layers.Conv2D(
+        filters=256,
+        kernel_size=3,
+        strides=2,
+        padding='valid',
+        activation=tf.nn.relu)
+    branch1.append(branch1_1)
+    branch1_training_kws.append(False)
+
+    batch_norm = tf.keras.layers.BatchNormalization()
+    branch1.append(batch_norm)
+    branch1_training_kws.append(True)
+
+    assert 4 == len(branch1) == len(branch1_training_kws)
+    self._branches.append(branch1)
+    self._training_kws.append(branch1_training_kws)
+
+    # branch 2
+    branch2 = []  # type: List[tf.keras.layers.Layer]
+    branch2_training_kws = []  # type: List[bool]
+
+    branch2_0 = tf.keras.layers.Conv2D(
+        filters=256,
+        kernel_size=1,
+        strides=1,
+        padding='same',
+        activation=tf.nn.relu)
+    branch2.append(branch2_0)
+    branch2_training_kws.append(False)
+
+    batch_norm = tf.keras.layers.BatchNormalization()
+    branch2.append(batch_norm)
+    branch2_training_kws.append(True)
+
+    branch2_1 = tf.keras.layers.Conv2D(
+        filters=256,
+        kernel_size=3,
+        strides=1,
+        padding='same',
+        activation=tf.nn.relu)
+    branch2.append(branch2_1)
+    branch2_training_kws.append(False)
+
+    batch_norm = tf.keras.layers.BatchNormalization()
+    branch2.append(batch_norm)
+    branch2_training_kws.append(True)
+
+    branch2_2 = tf.keras.layers.Conv2D(
+        filters=256,
+        kernel_size=3,
+        strides=2,
+        padding='valid',
+        activation=tf.nn.relu)
+    branch2.append(branch2_2)
+    branch2_training_kws.append(False)
+
+    batch_norm = tf.keras.layers.BatchNormalization()
+    branch2.append(batch_norm)
+    branch2_training_kws.append(True)
+
+    assert 6 == len(branch2) == len(branch2_training_kws)
+    self._branches.append(branch2)
+    self._training_kws.append(branch2_training_kws)
+
+    # branch 3
+    branch3 = []  # type: List[tf.keras.layers.Layer]
+    branch3_training_kws = []  # type: List[bool]
+
+    branch3_0 = tf.keras.layers.MaxPool2D(
+        pool_size=3, strides=2, padding='valid')
+    branch3.append(branch3_0)
+    branch3_training_kws.append(False)
+
+    assert 1 == len(branch3) == len(branch3_training_kws)
+    self._branches.append(branch3)
+    self._training_kws.append(branch3_training_kws)
+
+    # build branches and internal keras layer structure
+    assert 4 == len(self._branches) == len(self._training_kws)
+    super(ReductionB, self).build(input_shape)
+
+  def get_num_filters(self):
+    return 896
