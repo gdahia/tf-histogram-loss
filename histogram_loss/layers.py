@@ -393,7 +393,7 @@ class ReductionA(InceptionResNetReduction):
     # branch 2
     branch2 = []  # type: List[tf.keras.layers.Layer]
     branch2_0 = tf.keras.layers.MaxPool2D(
-        pool_size=3, stride=2, padding='valid')
+        pool_size=3, strides=2, padding='valid')
     branch2.append(branch2_0)
     self._branches.append(branch2)
 
