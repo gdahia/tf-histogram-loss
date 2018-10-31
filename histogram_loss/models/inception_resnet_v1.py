@@ -166,8 +166,8 @@ class InceptionResNetV1:
     self._bottleneck_batchnorm = tf.keras.layers.BatchNormalization()
     self._variables += self._bottleneck_batchnorm.variables
 
-    # create saver
-    self._saver = tf.train.Saver(var_list=self._variables)
+    # create checkpoint saver
+    self._checkpoint = tf.train.Checkpoint(variables=self._variables)
 
   def forward(self, inputs: tf.Tensor, training: bool = False) -> tf.Tensor:
     """Performs forward propagation/inference on the model.
@@ -242,10 +242,25 @@ class InceptionResNetV1:
 
     return optimizer.minimize(loss)
 
-  def save(self):
-    """
-    """
+  def save(self, file_preffix: str, sess: tf.Session = None) -> str:
+    """Saves the model variables with the given preffix.
 
-  def load(self):
+    Args:
+      file_prefix: a prefix to use for the checkpoint filenames (`/path/to/directory/and_a_prefix`). 
+      session: the session to evaluate variables in. Ignored when executing eagerly. If not provided when graph building, the default session is used.
+
+    Returns:
+      the full path to the checkpoint in which the model variables were saved.
     """
+    return self._checkpoint.save(file_preffix, sess)
+
+  def restore(self, save_path: str):
+    """Restores the model variables with the latest checkpoint in `save_path`.
+
+    Args:
+      save_path: refer to the documentation for `tf.train.Checkpoint.restore` for more details.
+
+    Returns:
+      a  load status object. Refer to the documentation for `tf.train.Checkpoint.restore` for more details.
     """
+    return self._checkpoint.restore(save_path)
