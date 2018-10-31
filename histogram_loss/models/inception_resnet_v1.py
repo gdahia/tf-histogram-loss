@@ -203,14 +203,17 @@ class InceptionResNetV1:
 
     return norm_outputs, outputs
 
-  def loss(self, outputs: tf.Tensor, labels: tf.Tensor) -> tf.Tensor:
+  def histogram_loss(self, outputs: tf.Tensor, labels: tf.Tensor) -> tf.Tensor:
     """Computes the histogram loss of `outputs` with given `labels`.
 
+    More details can be found in the documentation for `histogram_loss.loss.histogram_loss`.
+
     Args:
-      outputs:
-      labels:
+      outputs: A `tf.Tensor` matrix of shape `[batch_size, desc_dims]` containing the L2 normalized descriptors output by the model.
+      labels: A `tf.Tensor` array with `batch_size` elements corresponding to the labels for the given descriptors.
 
     Returns:
+      the histogram loss.
     """
     return histogram_loss(descriptors=outputs, labels=labels)
 
