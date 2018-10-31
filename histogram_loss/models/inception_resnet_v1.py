@@ -209,8 +209,8 @@ class InceptionResNetV1:
     More details can be found in the documentation for `histogram_loss.loss.histogram_loss`.
 
     Args:
-      outputs: A `tf.Tensor` matrix of shape `[batch_size, desc_dims]` containing the L2 normalized descriptors output by the model.
-      labels: A `tf.Tensor` array with `batch_size` elements corresponding to the labels for the given descriptors.
+      outputs: a `tf.Tensor` matrix of shape `[batch_size, desc_dims]` containing the L2 normalized descriptors output by the model.
+      labels: a `tf.Tensor` array with `batch_size` elements corresponding to the labels for the given descriptors.
 
     Returns:
       the histogram loss.
@@ -223,8 +223,8 @@ class InceptionResNetV1:
     More details can be found in the documentation for `tf.contrib.losses.metric_learning.triplet_semihard_loss`.
 
     Args:
-      outputs: A `tf.Tensor` matrix of shape `[batch_size, desc_dims]` containing the L2 normalized descriptors output by the model.
-      labels: A `tf.Tensor` array with `batch_size` elements corresponding to the labels for the given descriptors.
+      outputs: a `tf.Tensor` matrix of shape `[batch_size, desc_dims]` containing the L2 normalized descriptors output by the model.
+      labels: a `tf.Tensor` array with `batch_size` elements corresponding to the labels for the given descriptors.
 
     Returns:
       the triplet loss.
