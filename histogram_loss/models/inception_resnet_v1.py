@@ -188,10 +188,7 @@ class InceptionResNetV1:
         outputs = layer(outputs)
 
     # adaptive pooling
-    outputs = tf.reduce_mean(outputs, axis=[1, 2])
-
-    # flatten
-    outputs = tf.reshape(outputs, [-1, self._bottleneck_units])
+    outputs = tf.reduce_mean(outputs, axis=[1, 2], keepdims=False)
 
     # dropout
     outputs = self._dropout(outputs, training=training)
