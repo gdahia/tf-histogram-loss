@@ -234,6 +234,10 @@ class InceptionResNetV1:
     return tf.contrib.losses.metric_learning.triplet_semihard_loss(
         embeddings=outputs, labels=labels)
 
+  def softmax_loss(self, outputs: tf.Tensor, labels: tf.Tensor) -> tf.Tensor:
+    """
+    """
+
   def train(self, loss: tf.Tensor, learning_rate: float):
     """
     """
