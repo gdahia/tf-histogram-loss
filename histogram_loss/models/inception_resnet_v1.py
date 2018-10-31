@@ -160,7 +160,7 @@ class InceptionResNetV1:
 
     # bottleneck layer
     self._bottleneck = tf.keras.layers.Dense(
-        units=bottleneck_units, activation=tf.nn.relu)
+        units=bottleneck_units, activation=None)
     self._variables += self._bottleneck.variables
 
     self._bottleneck_batchnorm = tf.keras.layers.BatchNormalization()
