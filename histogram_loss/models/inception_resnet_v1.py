@@ -177,7 +177,8 @@ class InceptionResNetV1:
       training: Either a Python boolean, or a TensorFlow boolean scalar tensor (e.g. a placeholder). Whether to perform forward propagation in training mode (use batch statistics in batch normalization, apply dropout) or in inference mode (use the running statiscs for batch normalization, return the input untouched).
 
     Returns:
-      a `tf.Tensor` matrix of shape `[batch_size, bottleneck_units]` with the L2 normalized descriptors of the given inputs.
+      norm_outputs: a `tf.Tensor` matrix of shape `[batch_size, bottleneck_units]` with the L2 normalized descriptors of the given inputs.
+      outputs: a `tf.Tensor` matrix of shape `[batch_size, bottleneck_units]` with the outputs of the given inputs.
     """
     # common layers
     outputs = inputs
@@ -198,9 +199,9 @@ class InceptionResNetV1:
     outputs = self._bottleneck_batchnorm(outputs, training=training)
 
     # l2 normalize
-    outputs = tf.nn.l2_normalize(outputs, axis=-1)
+    norm_outputs = tf.nn.l2_normalize(outputs, axis=-1)
 
-    return outputs
+    return norm_outputs, outputs
 
   def loss(self, outputs: tf.Tensor, labels: tf.Tensor) -> tf.Tensor:
     """Computes the histogram loss of `outputs` with given `labels`.
