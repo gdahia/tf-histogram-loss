@@ -217,6 +217,23 @@ class InceptionResNetV1:
     """
     return histogram_loss(descriptors=outputs, labels=labels)
 
+  def triplet_loss(self, outputs: tf.Tensor, labels: tf.Tensor) -> tf.Tensor:
+    """Computes the triplet loss with semi-hard negative mining.
+
+    More details can be found in the documentation for `tf.contrib.losses.metric_learning.triplet_semihard_loss`.
+
+    Args:
+      outputs: A `tf.Tensor` matrix of shape `[batch_size, desc_dims]` containing the L2 normalized descriptors output by the model.
+      labels: A `tf.Tensor` array with `batch_size` elements corresponding to the labels for the given descriptors.
+
+    Returns:
+      the triplet loss.
+    """
+    labels = tf.reshape(labels, [-1])
+
+    return tf.contrib.losses.metric_learning.triplet_semihard_loss(
+        embeddings=outputs, labels=labels)
+
   def train(self, loss: tf.Tensor, learning_rate: float):
     """
     """
