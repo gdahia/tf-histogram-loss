@@ -1,42 +1,50 @@
-from typing import List, Tuple
+from typing import Tuple
 
+import os
 import tensorflow as tf
 
-from histogram_loss.datasets.utils import create_tf_dataset
 
+def decode_and_preprocess(path: str) -> Tuple[tf.Tensor, tf.Tensor]:
+  """Decodes and preprocesses the image in the given path with `tf`.
 
-def separate_paths_by_label(paths: List[str]) -> List[List[str]]:
-  """
-  """
+  Args:
+    path: string with the path to a `.jpg` image.
 
-
-def preprocess(path: str) -> Tuple[tf.Tensor, tf.Tensor]:
-  """
+  Returns:
+    a tuple `(image, label)` with the preprocessed image and its corresponding label.
   """
   # retrieve label
-  filename = tf.string_split(path, '/')[-1]
-  wo_extension = tf.string_split(filename, '.')[-1]
-  str_label = tf.strings.substr(wo_extension, 1, 6)
+  filename = tf.string_split([path], os.path.sep)
+  filename = tf.sparse_tensor_to_dense(filename, default_value='')
+  str_label = tf.strings.substr(filename[:, -2], 1, 6)
   label = tf.strings.to_number(str_label, out_type=tf.int32)
+  label = tf.squeeze(label)
 
   # retrieve image
   image_string = tf.read_file(path)
-  image = tf.image.decode_jpeg(image_string)
-  # image = tf.image.resize_images(image, [28, 28])  # hardcode proper size
+  image = tf.image.decode_jpeg(image_string, channels=3)
+  image = tf.image.resize_images(image, [256, 256])
+  image = tf.cast(image, dtype=tf.float32)
+  image = image / 255
 
   return image, label
 
 
-def load_vggface2_dataset(paths_path: str,
-                          preffix_path: str = None) -> tf.train.Dataset:
-  """
-  """
-  # read paths from file and preffix them
-  paths = [path.strip() for path in open(paths_path, 'r')]
-  paths = sorted(paths)
-  if preffix_path is not None:
-    paths = [preffix_path + path for path in paths]
+def load(paths_path: str, preffix: str = None) -> tf.data.Dataset:
+  """Loads a VGGFace2 datset subset.
 
-  paths_by_label = separate_paths_by_label(paths)
+  Loads either the training or test subsets of VGGFace2 dataset, depending on the given path.
 
-  return create_tf_dataset(paths_by_label, preprocess)
+  Args:
+    paths_path: the path to the list containing the image paths to be loaded, e.g. `train_list.txt` for the training subset and `test_list.txt` for the test subset.
+    preffix: a string to be preffixed to every path in the paths list.
+
+  Returns:
+    a `tf.data.Dataset` with the specified VGGFace2 dataset subset.
+  """
+  dataset = tf.data.TextLineDataset(paths_path)
+  if preffix is not None:
+    dataset = dataset.map(lambda path: preffix + path)
+  dataset = dataset.map(decode_and_preprocess)
+
+  return dataset
