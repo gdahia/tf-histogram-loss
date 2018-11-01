@@ -1,11 +1,10 @@
+import pytest
+from hypothesis import given, assume, strategies as st
+import hypothesis.extra.numpy as np_st
+
+import numpy as np
 import tensorflow as tf
 from tensorflow.python.eager.context import eager_mode
-import numpy as np
-
-import pytest
-from hypothesis import given, assume
-import hypothesis.strategies as st
-import hypothesis.extra.numpy as np_st
 
 from histogram_loss import utils
 
