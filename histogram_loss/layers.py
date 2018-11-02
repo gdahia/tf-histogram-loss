@@ -35,7 +35,7 @@ class InceptionResNetBlock(tf.keras.layers.Layer, ABC):
 
     # build up
     self._up = tf.keras.layers.Conv2D(
-        filters=input_shape[3],
+        filters=int(input_shape[3]),
         kernel_size=1,
         strides=1,
         padding='same',
