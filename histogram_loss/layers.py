@@ -27,11 +27,13 @@ class InceptionResNetBlock(tf.keras.layers.Layer, ABC):
   def build(self, input_shape: tf.TensorShape) -> None:
     # build each layer of each branch according
     # to the output shape of the previous layer
+    up_input_filters = 0
     for branch in self._branches:
       branch_input_shape = input_shape
       for layer in branch:
         layer.build(branch_input_shape)
         branch_input_shape = layer.compute_output_shape(branch_input_shape)
+      up_input_filters += branch_input_shape.as_list()[-1]
 
     # build up
     self._up = tf.keras.layers.Conv2D(
@@ -40,7 +42,10 @@ class InceptionResNetBlock(tf.keras.layers.Layer, ABC):
         strides=1,
         padding='same',
         activation=None)
-    self._up.build(input_shape)
+
+    up_input_shape = branch_input_shape.as_list()
+    up_input_shape[-1] = up_input_filters
+    self._up.build(up_input_shape)
 
     super(InceptionResNetBlock, self).build(input_shape)
 
