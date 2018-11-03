@@ -166,7 +166,7 @@ class Block35(InceptionResNetBlock):
     branch2_training_kws.append(True)
 
     branch2_1 = tf.keras.layers.Conv2D(
-        filters=48,
+        filters=32,
         kernel_size=3,
         strides=1,
         padding='same',
@@ -179,7 +179,7 @@ class Block35(InceptionResNetBlock):
     branch2_training_kws.append(True)
 
     branch2_2 = tf.keras.layers.Conv2D(
-        filters=64,
+        filters=32,
         kernel_size=3,
         strides=1,
         padding='same',
@@ -471,8 +471,8 @@ class ReductionA(InceptionResNetReduction):
     branch1_2 = tf.keras.layers.Conv2D(
         filters=256,
         kernel_size=3,
-        strides=1,
-        padding='same',
+        strides=2,
+        padding='valid',
         activation=tf.nn.relu)
     branch1.append(branch1_2)
     branch1_training_kws.append(False)
