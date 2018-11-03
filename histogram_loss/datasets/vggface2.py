@@ -23,7 +23,7 @@ def decode_and_preprocess(path: str) -> Tuple[tf.Tensor, tf.Tensor]:
   # retrieve image
   image_string = tf.read_file(path)
   image = tf.image.decode_jpeg(image_string, channels=3)
-  image = tf.image.resize_images(image, [256, 256])
+  image = tf.image.resize_images(image, [160, 160])
   image = tf.cast(image, dtype=tf.float32)
   image = image / 255
 

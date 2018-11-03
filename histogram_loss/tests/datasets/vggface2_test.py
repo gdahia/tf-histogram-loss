@@ -14,7 +14,7 @@ class TestVGGFace2:
     dataset = vggface2.load(path, dir_path)
 
     # confirm images are in right format
-    assert dataset.output_shapes[0].as_list() == [256, 256, 3]
+    assert dataset.output_shapes[0].as_list() == [160, 160, 3]
     assert dataset.output_types[0] is tf.float32
 
     # confirm labels are in right format
@@ -48,7 +48,7 @@ class TestVGGFace2:
       dataset = vggface2.load(path, dir_path)
 
       # confirm images are in right format
-      assert dataset.output_shapes[0].as_list() == [256, 256, 3]
+      assert dataset.output_shapes[0].as_list() == [160, 160, 3]
       assert dataset.output_types[0] is tf.float32
 
       # confirm labels are in right format
@@ -77,7 +77,7 @@ class TestVGGFace2:
     dataset = vggface2.load(path, dir_path)
 
     # confirm images are in right format
-    assert dataset.output_shapes[0].as_list() == [256, 256, 3]
+    assert dataset.output_shapes[0].as_list() == [160, 160, 3]
     assert dataset.output_types[0] is tf.float32
 
     # confirm labels are in right format
@@ -111,7 +111,7 @@ class TestVGGFace2:
       dataset = vggface2.load(path, dir_path)
 
       # confirm images are in right format
-      assert dataset.output_shapes[0].as_list() == [256, 256, 3]
+      assert dataset.output_shapes[0].as_list() == [160, 160, 3]
       assert dataset.output_types[0] is tf.float32
 
       # confirm labels are in right format
