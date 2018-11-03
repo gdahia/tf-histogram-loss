@@ -3,4 +3,3 @@ env/
 .coverage
 .hypothesis
 datasets/
-.testmondata

@@ -21,7 +21,6 @@ py==1.7.0
 pyflakes==2.0.0
 pytest==3.9.2
 pytest-cov==2.6.0
-pytest-testmon==0.9.13
 six==1.11.0
 tensorboard==1.11.0
 tensorflow==1.11.0
