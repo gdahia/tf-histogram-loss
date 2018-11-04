@@ -32,6 +32,8 @@ class InceptionResNetBlock(tf.keras.layers.Layer, ABC):
       branch_input_shape = input_shape
       for layer in branch:
         layer.build(branch_input_shape)
+        self._trainable_weights.extend(layer.trainable_weights)
+        self._non_trainable_weights.extend(layer.non_trainable_weights)
         branch_input_shape = layer.compute_output_shape(branch_input_shape)
       up_input_filters += branch_input_shape.as_list()[-1]
 
@@ -46,6 +48,8 @@ class InceptionResNetBlock(tf.keras.layers.Layer, ABC):
     up_input_shape = branch_input_shape.as_list()
     up_input_shape[-1] = up_input_filters
     self._up.build(up_input_shape)
+    self._trainable_weights.extend(self._up.trainable_weights)
+    self._non_trainable_weights.extend(self._up.non_trainable_weights)
 
     super(InceptionResNetBlock, self).build(input_shape)
 
@@ -368,6 +372,8 @@ class InceptionResNetReduction(tf.keras.layers.Layer, ABC):
       branch_input_shape = input_shape
       for layer in branch:
         layer.build(branch_input_shape)
+        self._trainable_weights.extend(layer.trainable_weights)
+        self._non_trainable_weights.extend(layer.non_trainable_weights)
         branch_input_shape = layer.compute_output_shape(branch_input_shape)
 
     super(InceptionResNetReduction, self).build(input_shape)
