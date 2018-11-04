@@ -84,10 +84,6 @@ class InceptionResNetBlock(tf.keras.layers.Layer, ABC):
     base_config['activation'] = self._activation
     return base_config
 
-  @classmethod
-  def from_config(cls, config: Dict[str, Any]):
-    return cls(**config)
-
 
 class Block35(InceptionResNetBlock):
   """Inception ResNet 35x35 block layer."""
@@ -404,13 +400,6 @@ class InceptionResNetReduction(tf.keras.layers.Layer, ABC):
   @abstractmethod
   def get_num_filters(self):
     """Number of added filters in the reduction."""
-
-  def get_config(self) -> Dict[str, Any]:
-    return super(InceptionResNetReduction, self).get_config()
-
-  @classmethod
-  def from_config(cls, config: Dict[str, Any]):
-    return cls(**config)
 
 
 class ReductionA(InceptionResNetReduction):
