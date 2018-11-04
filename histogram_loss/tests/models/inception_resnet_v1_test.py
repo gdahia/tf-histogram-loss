@@ -1,8 +1,10 @@
 import pytest
-from hypothesis import given, strategies as st
+from hypothesis import given, settings, unlimited, strategies as st
 from hypothesis.extra import numpy as np_st
 
 import numpy as np
+import tensorflow as tf
+from tensorflow.python.eager.context import eager_mode
 
 from histogram_loss.models import InceptionResNetV1
 
@@ -30,3 +32,34 @@ class TestInceptionResNetV1:
 
     with pytest.raises(ValueError):
       model.compute_output_shape(input_shape)
+
+  @given(
+      bottleneck_units=st.integers(1, 4096),
+      inputs=np_st.arrays(
+          dtype=np.uint8,
+          shape=(1, 160, 160, 3),
+          elements=st.integers(min_value=0, max_value=255)))
+  @settings(timeout=unlimited)
+  def test_forward_propagation(self, bottleneck_units, inputs):
+    inputs = np.array(inputs, dtype=np.float32) / 255
+
+    model = InceptionResNetV1(bottleneck_units)
+    inputs_pl = tf.placeholder(tf.float32, [None, None, None, 3])
+    outputs = model(inputs_pl)
+    with tf.Session() as sess:
+      sess.run(tf.initializers.variables(model.variables))
+      sess.run(outputs, feed_dict={inputs_pl: inputs})
+
+  @given(
+      bottleneck_units=st.integers(1, 4096),
+      inputs=np_st.arrays(
+          dtype=np.uint8,
+          shape=(1, 160, 160, 3),
+          elements=st.integers(min_value=0, max_value=255)))
+  @settings(timeout=unlimited)
+  def test_eager_forward_propagation(self, bottleneck_units, inputs):
+    inputs = np.array(inputs, dtype=np.float32) / 255
+
+    with eager_mode():
+      model = InceptionResNetV1(bottleneck_units)
+      model(inputs)
