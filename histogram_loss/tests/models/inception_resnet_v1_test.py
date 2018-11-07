@@ -9,6 +9,14 @@ from tensorflow.python.eager.context import eager_mode
 from histogram_loss.models import InceptionResNetV1
 
 
+@pytest.fixture(scope='function')
+def graph():
+  model = InceptionResNetV1(128)
+  inputs_pl = tf.placeholder(tf.float32, [None, None, None, 3])
+  outputs = model(inputs_pl)
+  yield model, inputs_pl, outputs
+
+
 class TestInceptionResNetV1:
   @given(
       bottleneck_units=st.integers(1, 4096),
@@ -34,18 +42,15 @@ class TestInceptionResNetV1:
       model.compute_output_shape(input_shape)
 
   @given(
-      bottleneck_units=st.integers(1, 4096),
       inputs=np_st.arrays(
           dtype=np.uint8,
           shape=(1, 160, 160, 3),
           elements=st.integers(min_value=0, max_value=255)))
   @settings(timeout=unlimited)
-  def test_forward_propagation(self, bottleneck_units, inputs):
+  def test_forward_propagation(self, graph, inputs):
     inputs = np.array(inputs, dtype=np.float32) / 255
 
-    model = InceptionResNetV1(bottleneck_units)
-    inputs_pl = tf.placeholder(tf.float32, [None, None, None, 3])
-    outputs = model(inputs_pl)
+    model, inputs_pl, outputs = graph
     with tf.Session() as sess:
       sess.run(tf.initializers.variables(model.variables))
       sess.run(outputs, feed_dict={inputs_pl: inputs})
